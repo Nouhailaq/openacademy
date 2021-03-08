@@ -324,6 +324,5 @@
               name="Students"
               parent="main_openacademy_menu"
 
-
               action="action_view_students"/>
 </odoo>
