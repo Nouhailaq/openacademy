@@ -103,7 +103,7 @@ class StudentRecord(models.Model):
     _name = "openacademy.student"
     name = fields.Char(string='Name', required=True)
     middle_name = fields.Char(string='Middle Name', required=True)
-    last_name = fields.Char(string='Last Name', required=True)
+    last_name= fields.Char(string='Last Name', required=True)
     photo = fields.Binary(string='Photo')
     student_age = fields.Integer(string='Age')
     student_dob = fields.Date(string="Date of Birth")
