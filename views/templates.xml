@@ -1,24 +1,54 @@
 <odoo>
     <data>
-<!--
-        <template id="listing">
-          <ul>
-            <li t-foreach="objects" t-as="object">
-              <a t-attf-href="#{ root }/objects/#{ object.id }">
-                <t t-esc="object.display_name"/>
-              </a>
-            </li>
-          </ul>
+
+        <template id="session_template" name='Sessions'>
+          <t t-call='website.layout'>
+            <div class="container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>
+                                Sessions
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="sessions" t-as="session">
+                            <t t-foreach="sessionid" t-as="id">
+                                <tr>
+                                    <td >
+                                        <a href='/my/sessions/id'>
+                                        <t  t-esc="session.name"/>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>
+                                Students
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="students" t-as="student">
+                            <tr>
+                                <td>
+                                    <t t-esc="student.name"/>
+                                </td>
+                            </tr>
+
+                        </t>
+                    </tbody>
+                </table>
+
+
+            </div>
+          </t>
         </template>
-        <template id="object">
-          <h1><t t-esc="object.display_name"/></h1>
-          <dl>
-            <t t-foreach="object._fields" t-as="field">
-              <dt><t t-esc="field"/></dt>
-              <dd><t t-esc="object[field]"/></dd>
-            </t>
-          </dl>
-        </template>
--->
     </data>
 </odoo>

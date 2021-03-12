@@ -326,7 +326,7 @@ msgstr "Augmenter les sièges ou supprimer les participants en trop"
 #: model:ir.model.fields,field_description:openacademy.field_res_partner__instructor
 #: model:ir.model.fields,field_description:openacademy.field_res_users__instructor
 msgid "Instructor"
-msgstr ""
+msgstr "Instructeur"
 
 #. module: openacademy
 #: model:ir.model.fields,field_description:openacademy.field_openacademy_course____last_update

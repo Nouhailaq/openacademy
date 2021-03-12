@@ -1,0 +1,586 @@
+<odoo>
+
+    <template id="portal_my_home_menu" name="Portal layout"
+              inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'courses'" t-attf-class="breadcrumb-item #{'active ' if not courses else ''}">
+                <a t-if="courses" t-attf-href="/my/courses?{{ keep_query() }}">My Courses</a>
+                <t t-else="">My Courses</t>
+            </li>
+            <li t-if="page_name == 'sessions'" t-attf-class="breadcrumb-item #{'active ' if not sessions else ''}">
+                <a t-if="courses" t-attf-href="/my/sessions?{{ keep_query() }}">My Sessions</a>
+                <t t-else="">My Sessions</t>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home" name="Portal My Home"
+              inherit_id="portal.portal_my_home"
+              priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">My Courses</t>
+                <t t-set="url" t-value="'/my/courses'"/>
+                <t t-set="count" t-value="course_count"/>
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">My Sessions</t>
+                <t t-set="url" t-value="'/my/sessions'"/>
+                <t t-set="count" t-value="session_count"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_courses" name="My courses">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Courses</t>
+                <div class="form-inline ml-lg-2">
+                    <a id="submit-ticket" t-attf-href="/create_course">
+                        <button t-attf-class="btn btn-info btn-sm">
+                            Submit a new Course
+                        </button>
+                    </a>
+                </div>
+            </t>
+            <t t-if="not courses">
+                <p>There are currently no course.</p>
+            </t>
+            <t t-if="courses" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Courses</th>
+                        <th>Responsible</th>
+                        <th>Unit Price</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <t t-foreach="courses" t-as="course">
+                        <tr>
+                            <td>
+                                <a t-attf-href="/my/courses/#{course.id}">
+                                    <small>#</small>
+                                    <span t-field="course.name"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <span t-field="course.responsible_id"></span>
+                            </td>
+                            <td>
+                                <span t-field="course.unit_price"></span>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_my_course" name="Course Portal Template">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Course</t>
+                <div class="form-inline ml-lg-2">
+                    <a id="submit-ticket" t-attf-href="/create_course">
+                        <button t-attf-class="btn btn-info btn-sm">
+                            Submit a new Course
+                        </button>
+                    </a>
+                </div>
+            </t>
+            <t t-set="wrapwrap_classes" t-value="'o_portal_bg_dark'"/>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <div class="row no-gutters">
+                        <div class="col-md">
+                            <div class="form-inline ml-lg-2" id="button_header">
+                            </div>
+                        </div>
+                        <div class="col-md text-center">
+                            <h5 class="mb-1 mb-md-0">
+                                <span t-esc="'Course: '+str(course.name)"/>
+                            </h5>
+                        </div>
+                    </div>
+                </t>
+                <t t-set="card_body">
+                    <form t-attf-action="/update_course/#{course.id}" method="post" role="form" name="update_course"
+                          class="o_wprofile_editor_form js_website_submit_form row" enctype="multipart/form-data">
+                        <input type="hidden" id="csrf_token" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="responsible_id" t-att-value="request.env.user.id"/>
+                        <input type="hidden" name="id" t-att-value="course.id"/>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="form-group col-6" id="name">
+                                            <label class="mb-1 text-primary" for="user_website">
+                                                <span class="font-weight-bold">Course Name</span>
+                                            </label>
+                                            <div>
+                                                <input type="text" t-att-value="course.name" name="name"
+                                                       class="form-control" id="name"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-6" id="unit_price">
+                                            <label class="mb-1 text-primary" for="user_website">
+                                                <span class="font-weight-bold">Unit Price</span>
+                                            </label>
+                                            <div>
+                                                <input type="number" min="3" t-att-value="course.unit_price"
+                                                       name="unit_price" class="form-control"
+                                                       id="unit_price"/>
+                                            </div>
+                                        </div>
+                                        <div class="col" id="submit_button">
+                                            <button type="submit" class="btn btn-primary o_wprofile_submit_btn">Update
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <br/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="course_submit" name="Course: Submit a Course">
+        <t t-call="portal.portal_layout">
+            <t t-set="body_classname" t-value="'o_wprofile_body'"/>
+            <div id="wrap" class="o_wprofile_wrap">
+                <div class="container pt-4 pb-5">
+                    <h1 class="o_page_header">New Course</h1>
+                    <t t-call="openacademy.course_content"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="course_content" name="course">
+        <div>
+            <form t-attf-action="/submit_course" method="post" role="form" name="create_course"
+                  class="o_wprofile_editor_form js_website_submit_form row" enctype="multipart/form-data">
+                <input type="hidden" id="csrf_token" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <input type="hidden" name="responsible_id" t-att-value="request.env.user.id"/>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-6" id="name">
+                                    <label class="mb-1 text-primary" for="user_website">
+                                        <span class="font-weight-bold">Course Name</span>
+                                    </label>
+                                    <div>
+                                        <input type="text" name="name" class="form-control" id="name"/>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6" id="unit_price">
+                                    <label class="mb-1 text-primary" for="user_website">
+                                        <span class="font-weight-bold">Unit Price</span>
+                                    </label>
+                                    <div>
+                                        <input type="number" min="3" name="unit_price" class="form-control"
+                                               id="unit_price"/>
+                                    </div>
+                                </div>
+                                <div class="col" id="submit_button">
+                                    <button type="submit" class="btn btn-primary o_wprofile_submit_btn">Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </template>
+
+    <template id="portal_my_sessions" name="My Sessions">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Sessions</t>
+                <div class="form-inline ml-lg-2">
+                    <a id="submit-ticket" t-attf-href="/create_session">
+                        <button t-attf-class="btn btn-success btn-sm">
+                            Submit a new Session
+                        </button>
+                    </a>
+                </div>
+            </t>
+            <t t-if="not sessions">
+                <p>There are currently no session.</p>
+            </t>
+            <t t-if="sessions" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Session Name</th>
+                        <th>Course</th>
+                        <th>Start Date</th>
+                        <th>Duration</th>
+                        <th>Number of seats</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <t t-foreach="sessions" t-as="session">
+                        <tr>
+                            <td>
+                                <a t-attf-href="/my/session/#{session.id}">
+                                    <small>#</small>
+                                    <span t-field="session.name"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <span t-field="session.course_id"></span>
+                            </td>
+                            <td>
+                                <span t-field="session.start_date"></span>
+                            </td>
+                            <td>
+                                <span t-field="session.duration"></span>
+                            </td>
+                            <td>
+                                <span t-field="session.seats"></span>
+                            </td>
+                            <td>
+                                <a id="submit-ticket" t-attf-href="/my/session/update/#{session.id}">
+                                    <button t-attf-class="btn btn-info btn-sm">
+                                        Update session
+                                    </button>
+                                </a>
+                                <a id="submit-ticket" t-attf-href="/my/session/delete/#{session.id}">
+                                    <button t-attf-class="btn btn-danger btn-sm">
+                                        Delete session
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_my_session" name="Session Portal Template">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Session</t>
+                <div class="form-inline ml-lg-2">
+                    <a id="submit-ticket" t-attf-href="/create_session">
+                        <button t-attf-class="btn btn-success btn-sm">
+                            Submit a new Session
+                        </button>
+                    </a>
+                </div>
+            </t>
+            <t t-set="wrapwrap_classes" t-value="'o_portal_bg_dark'"/>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <div class="row no-gutters">
+                        <div class="col-md">
+                            <div class="form-inline ml-lg-2" id="button_header">
+                            </div>
+                        </div>
+                        <div class="col-md text-center">
+                            <h5 class="mb-1 mb-md-0">
+                                <span t-esc="'Session: '+str(session.name)"/>
+                            </h5>
+                        </div>
+                    </div>
+                </t>
+                <t t-set="card_body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row mb-4">
+                                <strong class="col-lg-3">Name of Session</strong>
+                                <span class="col-lg-9" t-field="session.name"/>
+                            </div>
+                            <div class="row mb-4">
+                                <strong class="col-lg-3">Course</strong>
+                                <span class="col-lg-9" t-field="session.course_id"/>
+                            </div>
+                            <div class="row mb-4">
+                                <strong class="col-lg-3">Start Date</strong>
+                                <span class="col-lg-9" t-field="session.start_date"/>
+                            </div>
+                            <div class="row mb-4">
+                                <strong class="col-lg-3">Duration</strong>
+                                <span class="col-lg-9" t-esc="str(session.duration)"/>
+                            </div>
+                            <div class="row mb-4">
+                                <strong class="col-lg-3">Number of seats</strong>
+                                <span class="col-lg-9" t-esc="str(session.seats)"/>
+                            </div>
+                            <div class="row mb-4">
+                                <strong class="col-lg-3">Attendees</strong>
+                            </div>
+                        </div>
+
+                        <t t-if="attendees" t-call="portal.portal_table">
+                            <thead>
+                                <tr class="active">
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="attendees" t-as="attendee">
+                                    <tr>
+                                        <td>
+                                            <span t-field="attendee.display_name"></span>
+                                        </td>
+                                        <td>
+                                            <span t-field="attendee.phone"></span>
+                                        </td>
+                                        <td>
+                                            <span t-field="attendee.email"></span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </t>
+                    </div>
+                    <br/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="session_create" name="Session: Submit a Session">
+        <t t-call="portal.portal_layout">
+            <t t-set="body_classname" t-value="'o_wprofile_body'"/>
+            <div id="wrap" class="o_wprofile_wrap">
+                <div class="container pt-4 pb-5">
+                    <h1 class="o_page_header">New Session</h1>
+                    <t t-call="openacademy.session_content"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="session_content" name="session">
+        <div>
+            <form t-attf-action="/session_submit" method="post" role="form" name="session_submit"
+                  class="o_wprofile_editor_form js_website_submit_form row" enctype="multipart/form-data">
+                <input type="hidden" id="csrf_token" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <input type="hidden" name="responsible_id" t-att-value="request.env.user.id"/>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-6" id="name">
+                                    <label class="mb-1 text-primary" for="user_website">
+                                        <span class="font-weight-bold">Session Name</span>
+                                    </label>
+                                    <div>
+                                        <input type="text" name="name" class="form-control" id="name"/>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6" id="course_id">
+                                    <label class="mb-1 text-primary" for="user_website">
+                                        <span class="font-weight-bold">Course</span>
+                                    </label>
+                                    <div>
+                                        <select class="form-control" name="course_id" id="course_id">
+                                            <t t-foreach="courses" t-as="course">
+                                                <option t-att-value="course.id">
+                                                    <t t-esc="course.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6" id="start_date">
+                                    <label class="mb-1 text-primary" for="user_website">
+                                        <span class="font-weight-bold">Start Date</span>
+                                    </label>
+                                    <div>
+                                        <input type="date" name="start_date" class="form-control" id="start_date"/>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6" id="duration">
+                                    <label class="mb-1 text-primary" for="user_website">
+                                        <span class="font-weight-bold">Duration</span>
+                                    </label>
+                                    <div>
+                                        <input type="number" min="0" name="duration" class="form-control"
+                                               id="duration"/>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6" id="seats">
+                                    <label class="mb-1 text-primary" for="user_website">
+                                        <span class="font-weight-bold">Number of seats</span>
+                                    </label>
+                                    <div>
+                                        <input type="number" min="0" name="seats" class="form-control" id="seats"/>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6" id="attendee_ids">
+                                    <label class="mb-1 text-primary" for="user_website">
+                                        <span class="font-weight-bold">Attendees</span>
+                                    </label>
+                                    <div>
+                                        <select class="form-control" name="attendee_ids" id="attendee_ids"
+                                                multiple="multiple">
+                                            <t t-foreach="partners" t-as="partner">
+                                                <option t-att-value="partner.id">
+                                                    <t t-esc="partner.display_name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col" id="submit_button">
+                                    <button type="submit" class="btn btn-primary o_wprofile_submit_btn">Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </template>
+
+    <template id="session_update" name="Session Update Portal Template">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Session</t>
+                <div class="form-inline ml-lg-2">
+                    <a id="submit-ticket" t-attf-href="/create_session">
+                        <button t-attf-class="btn btn-success btn-sm">
+                            Submit a new Sessions
+                        </button>
+                    </a>
+                </div>
+            </t>
+            <t t-set="wrapwrap_classes" t-value="'o_portal_bg_dark'"/>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <div class="row no-gutters">
+                        <div class="col-md">
+                            <div class="form-inline ml-lg-2" id="button_header">
+                            </div>
+                        </div>
+                        <div class="col-md text-center">
+                            <h5 class="mb-1 mb-md-0">
+                                <span t-esc="'Session: '+str(session.name)"/>
+                            </h5>
+                        </div>
+                    </div>
+                </t>
+                <t t-set="card_body">
+                    <form t-attf-action="/session_update_submit" method="post" role="form" name="session_update_submit"
+                          class="o_wprofile_editor_form js_website_submit_form row" enctype="multipart/form-data">
+                        <input type="hidden" id="csrf_token" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="responsible_id" t-att-value="request.env.user.id"/>
+                        <input type="hidden" name="id" t-att-value="session.id"/>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="form-group col-6" id="name">
+                                            <label class="mb-1 text-primary" for="user_website">
+                                                <span class="font-weight-bold">Session Name</span>
+                                            </label>
+                                            <div>
+                                                <input type="text" name="name" class="form-control" id="name" t-att-value="session.name"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-6" id="course_id">
+                                            <label class="mb-1 text-primary" for="user_website">
+                                                <span class="font-weight-bold">Course</span>
+                                            </label>
+                                            <div>
+                                                <select class="form-control" name="course_id" id="course_id">
+                                                    <t t-foreach="courses" t-as="course">
+                                                        <t t-if="course.id==session.course_id.id">
+                                                            <option t-att-value="course.id" selected="selected">
+                                                                <t t-esc="course.name"/>
+                                                            </option>
+                                                        </t>
+                                                        <t t-if="not course.id==session.course_id.id">
+                                                            <option t-att-value="course.id">
+                                                                <t t-esc="course.name"/>
+                                                            </option>
+                                                        </t>
+
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-6" id="start_date">
+                                            <label class="mb-1 text-primary" for="user_website">
+                                                <span class="font-weight-bold">Start Date</span>
+                                            </label>
+                                            <div>
+                                                <input type="date" name="start_date" class="form-control" t-att-value="session.start_date" id="start_date"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-6" id="duration">
+                                            <label class="mb-1 text-primary" for="user_website">
+                                                <span class="font-weight-bold">Duration</span>
+                                            </label>
+                                            <div>
+                                                <input type="number" min="0" name="duration" class="form-control" t-att-value="session.duration" id="duration"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-6" id="seats">
+                                            <label class="mb-1 text-primary" for="user_website">
+                                                <span class="font-weight-bold">Number of seats</span>
+                                            </label>
+                                            <div>
+                                                <input type="number" min="0" name="seats" class="form-control" t-att-value="session.seats" id="seats"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-6" id="attendee_ids">
+                                            <label class="mb-1 text-primary" for="user_website">
+                                                <span class="font-weight-bold">Attendees</span>
+                                            </label>
+                                            <div>
+                                                <select class="form-control" name="attendee_ids" id="attendee_ids"
+                                                        multiple="multiple">
+                                                    <t t-foreach="partners" t-as="partner">
+                                                        <t t-if="partner in session.attendee_ids">
+                                                            <option t-att-value="partner.id" selected="selected">
+                                                                <t t-esc="partner.display_name"/>
+                                                            </option>
+                                                        </t>
+                                                        <t t-if="not partner in session.attendee_ids">
+                                                            <option t-att-value="partner.id">
+                                                                <t t-esc="partner.display_name"/>
+                                                            </option>
+                                                        </t>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col" id="submit_button">
+                                            <button type="submit" class="btn btn-primary o_wprofile_submit_btn">Submit Update
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <br/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+</odoo>
