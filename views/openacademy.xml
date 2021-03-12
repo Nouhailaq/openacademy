@@ -10,6 +10,7 @@
                 </p>
             </field>
         </record>
+
         <record model="ir.ui.view" id="course_tree_view">
             <field name="name">course.tree</field>
             <field name="model">openacademy.course</field>
@@ -324,4 +325,5 @@
               name="Students"
               parent="main_openacademy_menu"
               action="action_view_students"/>
+
 </odoo>

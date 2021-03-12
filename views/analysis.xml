@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+        <!-- Graph view -->
+    <record model="ir.ui.view" id="openacademy_user_analysis_graph_view">
+        <field name="name">openacademy.user.analysis.graph</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <graph string="Courses by Prof" type="pie">
+                <field name="id"/>
+                <field name="course_number" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+            <!-- Pivot view -->
+    <record model="ir.ui.view" id="openacademy_user_analysis_pivot_view">
+        <field name="name">openacademy.user.analysis.pivot</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <pivot string="Courses by Prof">
+                <field name="id"/>
+                <field name="course_number" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="course_analysis_action">
+        <field name="name">Course by professor</field>
+        <field name="res_model">openacademy.course</field>
+        <field name="context">{'group_by': 'responsible_id'}</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create the first course
+            </p>
+        </field>
+    </record>
+    <menuitem id="analysis_menu" name="Analysis" parent="main_openacademy_menu"/>
+    <menuitem id="courses_analysis_menu" name="Courses" parent="analysis_menu" action="course_analysis_action"/>
+</odoo>

@@ -5,3 +5,4 @@ from . import models
 from .models import partner
 from . import wizard
 from . import tests
+from . import user
