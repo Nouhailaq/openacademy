@@ -61,6 +61,11 @@ class Session(models.Model):
     taken_seats = fields.Float(string="Taken seats", compute='_taken_seats')
     end_date = fields.Date(string="End Date", store=True, compute='_get_end_date', inverse='_set_end_date')
     attendees_count = fields.Integer(string="Attendees count", compute='_get_attendees_count', store=True)
+    state = fields.Selection([
+        ('session started', 'Session Started'),
+        ('session en cours', 'Session En Cours'),
+        ('session finished', 'Session Finished')
+    ], string='Status', index=True, readonly=True, default='session started')
 
     def create_session_invoices(self):
         date_time = self.start_date.strftime("%m/%d/%Y")
@@ -134,6 +139,15 @@ class Session(models.Model):
         for r in self:
             if r.instructor_id and r.instructor_id in r.attendee_ids:
                 raise exceptions.ValidationError("A session's instructor can't be an attendee")
+
+    def action_en_cours(self):
+        for rec in self:
+            rec.state = 'session en cours'
+
+    def action_finished(self):
+        for rec in self:
+            rec.state = 'session finished'
+
 
 class StudentRecord(models.Model):
     _name = "openacademy.student"

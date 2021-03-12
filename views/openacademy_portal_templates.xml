@@ -212,8 +212,10 @@
                         <button t-attf-class="btn btn-success btn-sm">
                             Submit a new Session
                         </button>
+
                     </a>
                 </div>
+
             </t>
             <t t-if="not sessions">
                 <p>There are currently no session.</p>

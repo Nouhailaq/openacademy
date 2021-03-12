@@ -97,8 +97,12 @@
             <field name="name">session.form</field>
             <field name="model">openacademy.session</field>
             <field name="arch" type="xml">
-
                 <form string="Session Form">
+                    <header>
+                        <button name='action_en_cours' type="object" string="Confirm" states="session started" class="oe_highlight"/>
+                        <button name='action_finished' type="object" string="Finished" states="session en cours" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
                     <sheet>
                         <group>
                                 <field name="name"/>
